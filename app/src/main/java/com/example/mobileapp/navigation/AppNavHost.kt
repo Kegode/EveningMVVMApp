@@ -7,8 +7,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mobileapp.ui.theme.screens.SplashScreen
+import com.example.mobileapp.ui.theme.screens.home.DashboardScreen
 import com.example.mobileapp.ui.theme.screens.login.LoginScreen
 import com.example.mobileapp.ui.theme.screens.register.Greeting
+import com.example.mobileapp.ui.theme.screens.student.Student
 
 @Composable
 fun AppNavHost(
@@ -18,6 +21,9 @@ fun AppNavHost(
     NavHost(navController = navController, startDestination=startDestination){
         composable(ROUTE_REGISTER){ Greeting(navController)}
         composable(ROUTE_LOGIN){ LoginScreen(navController)}
+        composable(ROUTE_SPLASH){ SplashScreen(navController) }
+        composable(ROUTE_DASHBOARD){ DashboardScreen(navController)}
+        composable(ROUTE_ADD_STUDENT){ Student(navController)}
     }
 
 

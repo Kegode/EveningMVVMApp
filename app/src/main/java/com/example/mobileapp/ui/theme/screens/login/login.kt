@@ -43,6 +43,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobileapp.R
 import com.example.mobileapp.data.AuthViewModel
+import com.example.mobileapp.navigation.ROUTE_DASHBOARD
 
 
 @Composable
@@ -104,6 +105,7 @@ fun LoginScreen(navController: NavController){
         Button(onClick = {
                          val mylogin = AuthViewModel(navController, context)
                         mylogin.login(email.trim(),password.trim())
+                        navController.navigate(ROUTE_DASHBOARD)
         },
             modifier = Modifier
                 .wrapContentWidth()
