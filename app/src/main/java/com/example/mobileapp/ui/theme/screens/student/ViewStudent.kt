@@ -51,6 +51,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.mobileapp.data.StudentViewModel
 import com.example.mobileapp.models.Student
+import com.example.mobileapp.navigation.ROUTE_UPDATE_STUDENT
 
 
 @Composable
@@ -141,7 +142,7 @@ fun StudentItem(imageUrl:String,firstname:String,lastname:String,gender:String,
                         }
                         Spacer(modifier = Modifier.width(5.dp))
                         Button(onClick = {
-
+                            navController.navigate(ROUTE_UPDATE_STUDENT+"/{$id}")
                         },
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(Color.Green)

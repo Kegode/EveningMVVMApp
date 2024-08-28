@@ -44,6 +44,7 @@ import coil.compose.rememberImagePainter
 import com.example.mobileapp.R
 import com.example.mobileapp.data.StudentViewModel
 import com.example.mobileapp.navigation.ROUTE_ADD_STUDENT
+import com.example.mobileapp.navigation.ROUTE_VIEW_STUDENT
 
 @Composable
 fun Student(navController: NavController){
@@ -96,7 +97,9 @@ fun Student(navController: NavController){
                 .padding(20.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ){
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = {
+                navController.navigate(ROUTE_VIEW_STUDENT)
+            }) {
                 Text(text = "VIEW ALL STUDENTS")
             }
             val context= LocalContext.current
