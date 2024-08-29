@@ -66,58 +66,74 @@ class StudentViewModel(var navController: NavController,var context: Context) {
     fun updateStudent(
         context: Context,
         navController: NavController,
-        filePath: Uri,
-        firstname: String,
-        lastname: String,
-        gender: String,
-        desc: String,
+        filePath: Uri?,
+        firstname: String?,
+        lastname: String?,
+        gender: String?,
+        desc: String?,
         id: String,
         currentImageUrl: String
     ) {
         val databaseReference = FirebaseDatabase.getInstance().getReference("Students/$id")
 
-        if (filePath != Uri.EMPTY) {
-            val storageReference = FirebaseStorage.getInstance().reference
-            val imageRef = storageReference.child("Picture/${UUID.randomUUID()}.jpg")
+        // Retrieve the current student data
+        databaseReference.get().addOnSuccessListener { dataSnapshot ->
+            val currentStudent = dataSnapshot.getValue(Student::class.java)
 
-            imageRef.putFile(filePath)
-                .addOnSuccessListener {
-                    imageRef.downloadUrl.addOnSuccessListener { uri ->
-                        val imageUrl = uri.toString()
-                        val updatedStudent = Student(imageUrl, firstname, lastname, gender,
-                            desc, id)
+            if (currentStudent != null) {
+                // Prepare updated student data using non-null input or keep current data
+                val updatedStudent = Student(
+                    imageUrl = if (filePath != null && filePath != Uri.EMPTY) "" else currentStudent.imageUrl, // placeholder for imageUrl if new image is being uploaded
+                    firstname = firstname ?: currentStudent.firstname,
+                    lastname = lastname ?: currentStudent.lastname,
+                    gender = gender ?: currentStudent.gender,
+                    desc = desc ?: currentStudent.desc,
+                    id = id
+                )
 
-                        databaseReference.setValue(updatedStudent)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    Toast.makeText(context, "Update successful",
-                                        Toast.LENGTH_SHORT).show()
-                                    navController.navigate(ROUTE_VIEW_STUDENT)
-                                } else {
-                                    Toast.makeText(context, "Update failed: " +
-                                            "${task.exception?.message}", Toast.LENGTH_SHORT).show()
-                                }
+                // If a new image is provided, upload it, then update the student record
+                if (filePath != null && filePath != Uri.EMPTY) {
+                    val storageReference = FirebaseStorage.getInstance().reference
+                    val imageRef = storageReference.child("Picture/${UUID.randomUUID()}.jpg")
+
+                    imageRef.putFile(filePath)
+                        .addOnSuccessListener {
+                            imageRef.downloadUrl.addOnSuccessListener { uri ->
+                                updatedStudent.imageUrl = uri.toString() // Update the image URL
+                                databaseReference.setValue(updatedStudent)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            Toast.makeText(context, "Update successful", Toast.LENGTH_SHORT).show()
+                                            navController.navigate(ROUTE_VIEW_STUDENT)
+                                        } else {
+                                            Toast.makeText(context, "Update failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
                             }
-                    }
+                        }
+                        .addOnFailureListener { exception ->
+                            Toast.makeText(context, "Image upload failed: ${exception.message}", Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    // No new image, just update other fields
+                    databaseReference.setValue(updatedStudent)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Toast.makeText(context, "Update successful", Toast.LENGTH_SHORT).show()
+                                navController.navigate(ROUTE_VIEW_STUDENT)
+                            } else {
+                                Toast.makeText(context, "Update failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                 }
-                .addOnFailureListener { exception ->
-                    Toast.makeText(context, "Image upload failed: ${exception.message}",
-                        Toast.LENGTH_SHORT).show()
-                }
-        } else {
-
-            val updatedStudent = Student(currentImageUrl, firstname, lastname, gender,desc,id)
-            databaseReference.setValue(updatedStudent)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Toast.makeText(context, "Update successful", Toast.LENGTH_SHORT).show()
-                        navController.navigate(ROUTE_VIEW_STUDENT)
-                    } else {
-                        Toast.makeText(context, "Update failed: ${task.exception?.message}",
-                            Toast.LENGTH_SHORT).show()
-                    }
-                }
+            } else {
+                Toast.makeText(context, "Student not found", Toast.LENGTH_SHORT).show()
+            }
+        }.addOnFailureListener {
+            Toast.makeText(context, "Failed to retrieve student data", Toast.LENGTH_SHORT).show()
         }
     }
+
+
 
 }

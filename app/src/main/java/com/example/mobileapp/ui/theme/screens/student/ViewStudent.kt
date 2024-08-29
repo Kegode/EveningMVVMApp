@@ -142,7 +142,7 @@ fun StudentItem(imageUrl:String,firstname:String,lastname:String,gender:String,
                         }
                         Spacer(modifier = Modifier.width(5.dp))
                         Button(onClick = {
-                            navController.navigate(ROUTE_UPDATE_STUDENT+"/{$id}")
+                            navController.navigate(ROUTE_UPDATE_STUDENT+"/$id")
                         },
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(Color.Green)
