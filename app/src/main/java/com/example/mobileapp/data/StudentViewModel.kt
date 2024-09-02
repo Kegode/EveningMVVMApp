@@ -1,5 +1,6 @@
 package com.example.mobileapp.data
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
@@ -134,6 +135,34 @@ class StudentViewModel(var navController: NavController,var context: Context) {
         }
     }
 
+    fun deleteStudent(context: Context, id: String, navController: NavController) {
+
+        val progressDialog = ProgressDialog(context).apply {
+            setMessage("Deleting student...")
+            setCancelable(false)
+            show()
+        }
+
+
+        val delRef = FirebaseDatabase.getInstance().getReference("Students/$id")
+
+
+        delRef.removeValue().addOnCompleteListener { task ->
+
+            progressDialog.dismiss()
+
+            if (task.isSuccessful) {
+
+                Toast.makeText(context, "Student deleted successfully", Toast.LENGTH_SHORT).show()
+
+
+                navController.navigate(ROUTE_VIEW_STUDENT)
+            } else {
+
+                Toast.makeText(context, task.exception?.message ?: "Deletion failed", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
 
 }

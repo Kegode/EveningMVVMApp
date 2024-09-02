@@ -18,7 +18,7 @@ import com.example.mobileapp.ui.theme.screens.student.ViewStudentsScreen
 @Composable
 fun AppNavHost(
     navController: NavHostController= rememberNavController(),
-    startDestination: String= ROUTE_VIEW_STUDENT
+    startDestination: String= ROUTE_REGISTER
 ){
     NavHost(navController = navController, startDestination=startDestination){
         composable(ROUTE_REGISTER){ Greeting(navController)}

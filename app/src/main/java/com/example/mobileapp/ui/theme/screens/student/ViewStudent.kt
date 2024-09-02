@@ -130,7 +130,7 @@ fun StudentItem(imageUrl:String,firstname:String,lastname:String,gender:String,
                     Row {
                         Button(
                             onClick = {
-
+                                studentRepository.deleteStudent(context ,id,navController)
                             },
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(Color.Red)
